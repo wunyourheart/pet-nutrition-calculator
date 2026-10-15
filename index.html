@@ -13,10 +13,45 @@
 <div class="field"><label for="neutered">絕育狀態</label><select id="neutered"><option value="yes">已絕育</option><option value="no">未絕育</option></select></div>
 <div class="field"><label for="condition">體態與健康</label><select id="condition"><option value="ideal">健康、理想體態</option><option value="other">過重／過輕／慢性病／其他</option></select></div>
 <div class="field"><label for="activity">活動程度</label><select id="activity"><option value="normal">一般活動</option><option value="low">活動量較低</option><option value="high">活動量較高</option></select></div>
-<div class="field full"><label for="density">零食熱量（kcal／100g）</label><input id="density" type="number" inputmode="decimal" min="1" max="1000" step=".1" placeholder="請依零食包裝標示填入" required><p class="note">此數值請以產品實際標示為準，不同品牌與口味不可直接套用。</p></div>
+<div class="field full" id="vetbox" style="display:none"><label for="vetmer">獸醫師建議的每日總熱量（kcal／天）</label><input id="vetmer" type="number" inputmode="decimal" min="1" max="10000" step=".1" placeholder="例如 300"><p class="note">特殊生命階段、體態或健康狀況不使用一般公式，請填入獸醫師確認的熱量目標。</p></div><div class="field full"><label for="density">零食熱量（kcal／100g）</label><input id="density" type="number" inputmode="decimal" min="1" max="1000" step=".1" placeholder="請依零食包裝標示填入" required><p class="note">此數值請以產品實際標示為準，不同品牌與口味不可直接套用。</p></div>
 </div><button class="btn" type="submit">開始試算 →</button><p class="error" id="error" role="alert"></p></form></section>
 <section class="panel results" id="results" aria-live="polite"><div class="eyebrow">02 / YOUR PET'S DAILY GUIDE</div><h2>試算結果</h2><div class="metrics"><div class="metric">每日總熱量估算<b id="mer">—</b><small>kcal／天</small></div><div class="metric">零食熱量上限<b id="treat">—</b><small>kcal／天</small></div><div class="metric" style="grid-column:1/-1">換算這款零食的每日上限<b id="grams">—</b><small>公克／天（包含在每日零食總額度內）</small></div></div><p class="note" id="explain"></p><p class="note">這是依一般公式估算的起始參考值，非個別動物的營養處方。零食包含潔牙骨、訓練獎勵、餐桌食物等；主食應維持完整均衡。實際需求可能因體態、活動、品種及健康狀況而異。</p></section>
 <div class="footer">PET PROVISION LAB · 用心製作，回歸純粹。<br><a href="https://www.instagram.com/pet_provisionlab/" target="_blank" rel="noopener noreferrer">@pet_provisionlab</a><p>特殊疾病、成長期、懷孕哺乳或需體重管理的毛孩，請與獸醫師確認每日熱量目標。零食 10% 是上限，不代表必須吃到 10%。</p></div>
 </main><script>
-(function(){'use strict';const form=document.getElementById('form'),error=document.getElementById('error'),results=document.getElementById('results');function val(id){return document.getElementById(id).value}form.addEventListener('submit',function(e){e.preventDefault();error.textContent='';results.classList.remove('show');const w=Number(val('weight')),d=Number(val('density'));if(!Number.isFinite(w)||w<.5||w>100){error.textContent='請輸入 0.5～100 kg 的有效體重。';return}if(!Number.isFinite(d)||d<1||d>1000){error.textContent='請輸入 1～1000 kcal／100g 的有效零食熱量。';return}if(val('age')!=='adult'||val('condition')!=='ideal'){error.textContent='這類毛孩需要個別評估，無法安全地用一般公式推算。請先選擇「健康成年」及「健康、理想體態」測試功能；若是毛孩的真實狀況，請先請獸醫師確認每日熱量目標。';return}const rer=70*Math.pow(w,.75);let factor;if(val('species')==='cat'){factor=val('neutered')==='yes'?1.2:1.4;if(val('activity')==='low')factor*=.9;if(val('activity')==='high')factor*=1.1}else{factor=val('neutered')==='yes'?1.6:1.8;if(val('activity')==='low')factor=1.3;if(val('activity')==='high')factor*=1.15}const mer=rer*factor,treat=mer*.1,grams=treat*100/d;document.getElementById('mer').textContent=Math.round(mer);document.getElementById('treat').textContent=treat.toFixed(1);document.getElementById('grams').textContent=grams.toFixed(1);document.getElementById('explain').textContent='計算方式：RER = 70 × 體重(kg)^0.75；每日熱量估算 = RER × 活動與絕育係數（'+factor.toFixed(2)+'）；零食上限 = 每日熱量 × 10%；零食克數 = 零食熱量上限 ÷ 每公克熱量。';results.classList.add('show');results.scrollIntoView({behavior:'smooth',block:'start'});});})();
+(function(){
+'use strict';
+const form=document.getElementById('form');
+const error=document.getElementById('error');
+const results=document.getElementById('results');
+const vetbox=document.getElementById('vetbox');
+function val(id){return document.getElementById(id).value}
+function needsVet(){return val('age')!=='adult'||val('condition')!=='ideal'}
+function sync(){vetbox.style.display=needsVet()?'block':'none';results.classList.remove('show');error.textContent=''}
+['species','weight','age','neutered','condition','activity','density','vetmer'].forEach(function(id){document.getElementById(id).addEventListener('change',sync)});
+['age','condition'].forEach(function(id){document.getElementById(id).addEventListener('input',sync)});
+form.addEventListener('submit',function(e){
+e.preventDefault();error.textContent='';results.classList.remove('show');
+const w=Number(val('weight')),d=Number(val('density'));
+if(!Number.isFinite(w)||w<.5||w>100){error.textContent='請輸入 0.5～100 kg 的有效體重。';return}
+if(!Number.isFinite(d)||d<1||d>1000){error.textContent='請輸入 1～1000 kcal／100g 的有效零食熱量。';return}
+let mer,detail;
+if(needsVet()){
+mer=Number(val('vetmer'));
+if(!val('vetmer')||!Number.isFinite(mer)||mer<=0||mer>10000){error.textContent='請先填入獸醫師建議的每日總熱量（kcal／天），才能換算零食上限。';return}
+detail='使用獸醫師提供的每日總熱量，不以一般公式推估。';
+}else{
+const rer=70*Math.pow(w,.75);let factor;
+if(val('species')==='cat'){factor=val('neutered')==='yes'?1.2:1.4;if(val('activity')==='low')factor*=.9;if(val('activity')==='high')factor*=1.1}
+else{factor=val('neutered')==='yes'?1.6:1.8;if(val('activity')==='low')factor=1.3;if(val('activity')==='high')factor*=1.15}
+mer=rer*factor;detail='計算方式：RER = 70 × 體重(kg)^0.75；每日熱量估算 = RER × 調整係數（'+factor.toFixed(2)+'）。';
+}
+const treat=mer*.1,grams=treat*100/d;
+document.getElementById('mer').textContent=Math.round(mer);
+document.getElementById('treat').textContent=treat.toFixed(1);
+document.getElementById('grams').textContent=grams.toFixed(1);
+document.getElementById('explain').textContent=detail+' 零食熱量上限 = 每日熱量 × 10%；零食克數上限 = 零食熱量上限 ÷ 每公克熱量。';
+results.classList.add('show');results.scrollIntoView({behavior:'smooth',block:'start'});
+});
+sync();
+})();
 </script></body></html>
