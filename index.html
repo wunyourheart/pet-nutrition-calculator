@@ -13,36 +13,57 @@
 <div class="field"><label for="ageUnit">年齡單位</label><select id="ageUnit"><option value="year">歲</option><option value="month">個月</option></select></div>
 <div class="field"><label for="neutered">有結紮嗎？</label><select id="neutered"><option value="yes">有</option><option value="no">沒有</option><option value="unknown">不確定</option></select></div>
 <div class="field"><label for="activity">平常活動量如何？</label><select id="activity"><option value="normal">一般，會散步或玩耍</option><option value="low">比較宅，喜歡睡覺休息</option><option value="high">很活潑，經常跑跳運動</option></select></div>
-<div class="field full"><label for="health">毛孩目前有特殊狀況嗎？</label><select id="health"><option value="healthy">沒有，健康狀況正常</option><option value="weight">有點過胖或偏瘦</option><option value="medical">有慢性病或特殊飲食需求</option><option value="pregnant">懷孕或哺乳中</option><option value="unsure">不太確定</option></select></div>
-<div class="field full"><label for="density">零食熱量（kcal／100g）· 選填</label><input id="density" type="number" inputmode="decimal" min="1" max="1000" step=".1" placeholder="例如 400"><p class="note">不知道也可以先試算熱量上限；填寫後會再換算零食克數。</p></div>
+<div class="field full"><label for="health">毛孩目前有特殊狀況嗎？</label><select id="health"><option value="healthy">沒有，健康狀況正常</option><option value="over">有點過胖</option><option value="under">偏瘦</option><option value="medical">有慢性病或特殊飲食需求</option><option value="pregnant">懷孕或哺乳中</option><option value="unsure">不太確定</option></select></div>
+<div class="field full" id="idealbox" style="display:none"><label for="idealweight">獸醫師評估的理想體重（kg）· 選填</label><input id="idealweight" type="number" inputmode="decimal" min=".5" max="100" step=".1" placeholder="例如 4.5"><p class="note">過重毛孩建議用理想體重估算，未填時僅顯示依目前體重計算的基礎熱量 RER，不能視為減重熱量目標。</p></div><div class="field full" id="vetbox" style="display:none"><label for="vetmer">獸醫師建議的每日熱量（kcal／天）· 選填</label><input id="vetmer" type="number" inputmode="decimal" min="1" max="10000" step="1" placeholder="例如 300"><p class="note">有慢性病、偏瘦、懷孕哺乳或狀況不確定時，可填入已確認的熱量，換算零食上限。</p></div><div class="field full"><label for="density">零食熱量（kcal／100g）· 選填</label><input id="density" type="number" inputmode="decimal" min="1" max="1000" step=".1" placeholder="例如 400"><p class="note">不知道也可以先試算熱量上限；填寫後會再換算零食克數。</p></div>
 </div><button class="btn" type="submit">開始試算 →</button><p class="error" id="error" role="alert"></p><p class="note" id="specialhint" aria-live="polite"></p></form></section>
-<section class="panel results" id="results" aria-live="polite"><div class="eyebrow">02 / YOUR PET'S DAILY GUIDE</div><h2>試算結果</h2><div class="metrics"><div class="metric">每日總熱量估算<b id="mer">—</b><small>kcal／天</small></div><div class="metric">零食熱量上限<b id="treat">—</b><small>kcal／天</small></div><div class="metric" id="grambox" style="grid-column:1/-1">換算這款零食的每日上限<b id="grams">—</b><small>公克／天（包含在每日零食總額度內）</small></div></div><p class="note" id="explain"></p><p class="note">這是依一般公式估算的起始參考值，非個別動物的營養處方。零食包含潔牙骨、訓練獎勵、餐桌食物等；主食應維持完整均衡。實際需求可能因體態、活動、品種及健康狀況而異。</p></section>
+<section class="panel results" id="results" aria-live="polite"><div class="eyebrow">02 / YOUR PET'S DAILY GUIDE</div><h2>試算結果</h2><div class="metrics"><div class="metric">每日總熱量估算<b id="mer">—</b><small>kcal／天</small></div><div class="metric">零食熱量上限<b id="treat">—</b><small>kcal／天</small></div><div class="metric" id="grambox" style="grid-column:1/-1">換算這款零食的每日上限<b id="grams">—</b><small>公克／天（包含在每日零食總額度內）</small></div></div><p class="note" id="explain"></p><p class="note" id="resultwarning" style="color:#923f35;font-weight:600"></p><p class="note">這是依一般公式估算的起始參考值，非個別動物的營養處方。零食包含潔牙骨、訓練獎勵、餐桌食物等；主食應維持完整均衡。實際需求可能因體態、活動、品種及健康狀況而異。</p></section>
 <div class="footer">PET PROVISION LAB · 用心製作，回歸純粹。<br><a href="https://www.instagram.com/pet_provisionlab/" target="_blank" rel="noopener noreferrer">@pet_provisionlab</a><p>特殊疾病、成長期、懷孕哺乳或需體重管理的毛孩，請與獸醫師確認每日熱量目標。零食 10% 是上限，不代表必須吃到 10%。</p></div>
 </main><script>
 (function(){
 'use strict';
-const $=id=>document.getElementById(id),form=$('form'),results=$('results'),error=$('error'),hint=$('specialhint');
-const val=id=>$(id).value;
-function years(){const n=Number(val('ageNumber'));return val('ageUnit')==='month'?n/12:n}
-function special(){const y=years();return y<1||val('health')!=='healthy'}
-function advisory(){let messages=[];if(years()<1)messages.push('幼年毛孩仍在成長，熱量需求變化較快');if(val('health')==='weight')messages.push('體重管理或偏瘦情況需要個別評估');if(val('health')==='medical')messages.push('特殊疾病可能需要專屬飲食計畫');if(val('health')==='pregnant')messages.push('懷孕或哺乳期間需求不同');if(val('health')==='unsure')messages.push('尚未確認健康與體態狀況');return messages.join('；')}
-function sync(){results.classList.remove('show');error.textContent='';const n=val('ageNumber');hint.textContent=n&&special()?'提醒：'+advisory()+'。建議先由獸醫師確認每日熱量，本工具不會套用一般成年公式。':n&&years()>=7?'提醒：年齡較大的毛孩需求因體型、肌肉量及健康狀況而異，以下僅供初步參考。':''}
-['species','weight','ageNumber','ageUnit','neutered','activity','health','density'].forEach(id=>$(id).addEventListener('change',sync));
+const $=id=>document.getElementById(id),val=id=>$(id).value,form=$('form'),results=$('results'),error=$('error'),hint=$('specialhint');
+const years=()=>val('ageUnit')==='month'?Number(val('ageNumber'))/12:Number(val('ageNumber'));
+function sync(){
+results.classList.remove('show');error.textContent='';
+$('idealbox').style.display=val('health')==='over'?'block':'none';
+$('vetbox').style.display=['under','medical','pregnant','unsure'].includes(val('health'))?'block':'none';
+hint.textContent=val('health')==='over'?'過重毛孩需要評估理想體重，避免以目前體重高估餵食量。':val('health')!=='healthy'?'特殊狀況可能需要個別營養計畫，建議由獸醫師確認每日熱量。':years()<1&&val('ageNumber')?'成長期熱量需求變動快，以下為粗略估算，請由獸醫師確認。':'';
+}
+['species','weight','ageNumber','ageUnit','neutered','activity','health','density','idealweight','vetmer'].forEach(id=>$(id).addEventListener('change',sync));
 form.addEventListener('submit',function(e){
 e.preventDefault();sync();
-const w=Number(val('weight')),n=Number(val('ageNumber')),y=years(),ds=val('density').trim(),d=Number(ds);
-if(!val('weight')||!Number.isFinite(w)||w<.5||w>100){error.textContent='請輸入 0.5～100 kg 的有效體重。';return}
-if(!val('ageNumber')||!Number.isFinite(n)||n<=0||y>35){error.textContent='請填寫有效的年齡，例如 5 歲或 6 個月。';return}
-if(ds&&(!Number.isFinite(d)||d<1||d>1000)){error.textContent='零食熱量若有填寫，請輸入 1～1000 kcal／100g。';return}
-if(val('neutered')==='unknown'){error.textContent='結紮狀態會影響估算係數，請先確認是否結紮。';return}
-if(special()){error.textContent='這類狀況建議先由獸醫師評估每日熱量，避免套用一般成年公式而產生誤差。';return}
-const rer=70*Math.pow(w,.75);let factor;
+const w=Number(val('weight')),n=Number(val('ageNumber')),y=years(),ds=val('density').trim(),d=Number(ds),health=val('health');
+if(!val('weight')||!Number.isFinite(w)||w<.5||w>100){error.textContent='請輸入有效體重（0.5～100 kg）。';return}
+if(!val('ageNumber')||!Number.isFinite(n)||n<=0||y>35){error.textContent='請輸入有效年齡，例如 5 歲或 6 個月。';return}
+if(ds&&(!Number.isFinite(d)||d<1||d>1000)){error.textContent='零食熱量請輸入 1～1000 kcal／100g。';return}
+let mer,method='',warning='',base=70*Math.pow(w,.75),isVet=false;
+const vm=Number(val('vetmer'));
+if(['under','medical','pregnant','unsure'].includes(health)){
+if(!val('vetmer')||!Number.isFinite(vm)||vm<=0||vm>10000){error.textContent='這類特殊狀況沒有單一可靠公式。請填入獸醫師確認的每日熱量，再換算零食上限；避免給出可能誤導的數字。';return}
+mer=vm;isVet=true;method='依獸醫師提供的每日熱量換算。';warning='特殊狀況請遵循獸醫師的餵養建議，10% 並非所有處方飲食都適用。';
+}else if(health==='over'){
+const iw=Number(val('idealweight'));
+if(val('idealweight')&&Number.isFinite(iw)&&iw>=.5&&iw<=100&&iw<=w){mer=70*Math.pow(iw,.75);method='依輸入的理想體重計算 RER 作為參考基準，並非正式減重熱量處方。';warning='過重毛孩的減重熱量須由獸醫師依理想體重、體態及減重速度調整。此值不能直接當成餵食處方。'}
+else{mer=base;method='僅顯示目前體重的 RER（靜止能量需求），不是減重所需的每日總熱量。';warning='尚未提供合適的理想體重，這個數字不能作為每日餵食量或零食配額，請由獸醫師確認。'}
+}else if(y<1){
+let factor=y<.333?3:2;mer=base*factor;
+method='成長期粗估：RER × '+factor+'。此係數只用於初步參考，幼犬與幼貓的需求會隨生長速度變化。';
+warning='成長期需以完整均衡的幼年主食為優先，零食不宜取代主食；請由獸醫師確認熱量與適用零食。';
+}else{
+if(val('neutered')==='unknown'){error.textContent='請先確認結紮狀態，以便選擇估算係數。';return}
+let factor;
 if(val('species')==='cat'){factor=val('neutered')==='yes'?1.2:1.4;if(val('activity')==='low')factor*=.9;if(val('activity')==='high')factor*=1.1}
 else{factor=val('neutered')==='yes'?1.6:1.8;if(val('activity')==='low')factor=1.3;if(val('activity')==='high')factor*=1.15}
-const mer=rer*factor,treat=mer*.1;
-$('mer').textContent=Math.round(mer);$('treat').textContent=treat.toFixed(1);
-$('grambox').style.display=ds?'block':'none';if(ds)$('grams').textContent=(treat*100/d).toFixed(1);
-$('explain').textContent='RER = 70 × 體重(kg)^0.75；每日熱量估算 = RER × 調整係數（'+factor.toFixed(2)+'）。零食熱量上限 = 每日熱量 × 10%。'+(ds?'零食克數 = 上限熱量 ÷ 每公克熱量。':'若想換算克數，可再填寫包裝上的零食熱量。');
+mer=base*factor;method='RER = 70 × 體重(kg)^0.75；每日熱量約為 RER × '+factor.toFixed(2)+'。';
+if(y>=7)warning='高齡毛孩的實際需求受肌肉量、健康狀況及活動影響，建議定期由獸醫師評估。';
+}
+const reliable=!(health==='over'&&!val('idealweight'));
+$('mer').textContent=Math.round(mer);
+$('treat').textContent=reliable?(mer*.1).toFixed(1):'—';
+$('grambox').style.display=ds&&reliable?'block':'none';
+if(ds&&reliable)$('grams').textContent=(mer*.1*100/d).toFixed(1);
+$('explain').textContent=method+(reliable?' 零食熱量以每日總熱量的 10% 作為一般上限，並非建議一定吃滿。':' 無法據此可靠換算零食配額。');
+$('resultwarning').textContent=warning+(isVet?' 若獸醫師要求限制零食，應以獸醫師建議為準。':'');
 results.classList.add('show');results.scrollIntoView({behavior:'smooth',block:'start'});
 });
 sync();
