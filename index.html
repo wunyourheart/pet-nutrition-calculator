@@ -14,9 +14,9 @@
 <div class="field"><label for="neutered">有結紮嗎？</label><select id="neutered"><option value="yes">有</option><option value="no">沒有</option><option value="unknown">不確定</option></select></div>
 <div class="field"><label for="activity">平常活動量如何？</label><select id="activity"><option value="normal">一般，會散步或玩耍</option><option value="low">比較宅，喜歡睡覺休息</option><option value="high">很活潑，經常跑跳運動</option></select></div>
 <div class="field full"><label for="health">毛孩目前有特殊狀況嗎？</label><select id="health"><option value="healthy">沒有，健康狀況正常</option><option value="over">有點過胖</option><option value="under">偏瘦</option><option value="medical">有慢性病或特殊飲食需求</option><option value="pregnant">懷孕或哺乳中</option><option value="unsure">不太確定</option></select></div>
-<div class="field full" id="idealbox" style="display:none"><label for="idealweight">獸醫師評估的理想體重（kg）· 選填</label><input id="idealweight" type="number" inputmode="decimal" min=".5" max="100" step=".1" placeholder="例如 4.5"><p class="note">過重毛孩建議用理想體重估算，未填時僅顯示依目前體重計算的基礎熱量 RER，不能視為減重熱量目標。</p></div><div class="field full" id="vetbox" style="display:none"><label for="vetmer">獸醫師建議的每日熱量（kcal／天）· 選填</label><input id="vetmer" type="number" inputmode="decimal" min="1" max="10000" step="1" placeholder="例如 300"><p class="note">有慢性病、偏瘦、懷孕哺乳或狀況不確定時，可填入已確認的熱量，換算零食上限。</p></div><div class="field full"><label for="density">零食熱量（kcal／100g）· 選填</label><input id="density" type="number" inputmode="decimal" min="1" max="1000" step=".1" placeholder="例如 400"><p class="note">不知道也可以先試算熱量上限；填寫後會再換算零食克數。</p></div>
+<div class="field full" id="idealbox" style="display:none"><label for="idealweight">獸醫師評估的理想體重（kg）· 選填</label><input id="idealweight" type="number" inputmode="decimal" min=".5" max="100" step=".1" placeholder="例如 4.5"><p class="note">過重毛孩建議用理想體重估算，未填時僅顯示依目前體重計算的基礎熱量 RER，不能視為減重熱量目標。</p></div><div class="field full" id="vetbox" style="display:none"><label for="vetmer">獸醫師建議的每日熱量（kcal／天）· 選填</label><input id="vetmer" type="number" inputmode="decimal" min="1" max="10000" step="1" placeholder="例如 300"><p class="note">有慢性病、偏瘦、懷孕哺乳或狀況不確定時，可填入已確認的熱量，換算零食上限。</p></div><div class="field full"><label for="snackmode">想換算哪一款零食？</label><select id="snackmode"><option value="chicken">寵食製所｜本土雞胸肉舒肥熟凍乾（40g／146 kcal）</option><option value="beef">寵食製所｜澳洲草飼牛後腿舒肥熟凍乾（40g／152 kcal）</option><option value="other">其他品牌｜照包裝填寫</option><option value="none">只看每日零食熱量上限</option></select><p class="note" id="snackdesc">選擇寵食製所的產品，系統會自動帶入包裝上的熱量。</p></div><div class="field full" id="otherbox" style="display:none"><div class="grid"><div class="field"><label for="servingg">包裝每份幾公克？</label><input id="servingg" type="number" inputmode="decimal" min=".1" max="10000" step=".1" placeholder="例如 40"></div><div class="field"><label for="servingkcal">每份熱量幾 kcal？</label><input id="servingkcal" type="number" inputmode="decimal" min=".1" max="10000" step=".1" placeholder="例如 146"></div></div><p class="note">直接抄包裝上的每份重量與熱量，不用自行換算每 100g。</p></div>
 </div><button class="btn" type="submit">開始試算 →</button><p class="error" id="error" role="alert"></p><p class="note" id="specialhint" aria-live="polite"></p></form></section>
-<section class="panel results" id="results" aria-live="polite"><div class="eyebrow">02 / YOUR PET'S DAILY GUIDE</div><h2>試算結果</h2><div class="metrics"><div class="metric">每日總熱量估算<b id="mer">—</b><small>kcal／天</small></div><div class="metric">零食熱量上限<b id="treat">—</b><small>kcal／天</small></div><div class="metric" id="grambox" style="grid-column:1/-1">換算這款零食的每日上限<b id="grams">—</b><small>公克／天（包含在每日零食總額度內）</small></div></div><p class="note" id="explain"></p><p class="note" id="resultwarning" style="color:#923f35;font-weight:600"></p><p class="note">這是依一般公式估算的起始參考值，非個別動物的營養處方。零食包含潔牙骨、訓練獎勵、餐桌食物等；主食應維持完整均衡。實際需求可能因體態、活動、品種及健康狀況而異。</p></section>
+<section class="panel results" id="results" aria-live="polite"><div class="eyebrow">02 / YOUR PET'S DAILY GUIDE</div><h2>試算結果</h2><div class="metrics"><div class="metric">每日總熱量估算<b id="mer">—</b><small>kcal／天</small></div><div class="metric">零食熱量上限<b id="treat">—</b><small>kcal／天</small></div><div class="metric" id="grambox" style="grid-column:1/-1">換算這款零食的每日上限<b id="grams">—</b><small>公克／天（所有零食合計不得超過每日熱量額度）</small></div></div><p class="note" id="snackresult"></p><p class="note" id="explain"></p><p class="note" id="resultwarning" style="color:#923f35;font-weight:600"></p><p class="note">這是依一般公式估算的起始參考值，非個別動物的營養處方。零食包含潔牙骨、訓練獎勵、餐桌食物等；主食應維持完整均衡。實際需求可能因體態、活動、品種及健康狀況而異。</p></section>
 <div class="footer">PET PROVISION LAB · 用心製作，回歸純粹。<br><a href="https://www.instagram.com/pet_provisionlab/" target="_blank" rel="noopener noreferrer">@pet_provisionlab</a><p>特殊疾病、成長期、懷孕哺乳或需體重管理的毛孩，請與獸醫師確認每日熱量目標。零食 10% 是上限，不代表必須吃到 10%。</p></div>
 </main><script>
 (function(){
@@ -25,17 +25,23 @@ const $=id=>document.getElementById(id),val=id=>$(id).value,form=$('form'),resul
 const years=()=>val('ageUnit')==='month'?Number(val('ageNumber'))/12:Number(val('ageNumber'));
 function sync(){
 results.classList.remove('show');error.textContent='';
+$('otherbox').style.display=val('snackmode')==='other'?'block':'none';
+$('snackdesc').textContent=val('snackmode')==='chicken'?'本土雞胸肉：40g／146 kcal（每公克約 3.65 kcal）。':val('snackmode')==='beef'?'澳洲草飼牛後腿：40g／152 kcal（每公克約 3.8 kcal）。':val('snackmode')==='none'?'不需要填零食熱量，也能先看 kcal 上限。':'依照其他品牌包裝標示的每份重量及每份熱量填寫。';
 $('idealbox').style.display=val('health')==='over'?'block':'none';
 $('vetbox').style.display=['under','medical','pregnant','unsure'].includes(val('health'))?'block':'none';
 hint.textContent=val('health')==='over'?'過重毛孩需要評估理想體重，避免以目前體重高估餵食量。':val('health')!=='healthy'?'特殊狀況可能需要個別營養計畫，建議由獸醫師確認每日熱量。':years()<1&&val('ageNumber')?'成長期熱量需求變動快，以下為粗略估算，請由獸醫師確認。':'';
 }
-['species','weight','ageNumber','ageUnit','neutered','activity','health','density','idealweight','vetmer'].forEach(id=>$(id).addEventListener('change',sync));
+['species','weight','ageNumber','ageUnit','neutered','activity','health','snackmode','servingg','servingkcal','idealweight','vetmer'].forEach(id=>$(id).addEventListener('change',sync));
 form.addEventListener('submit',function(e){
 e.preventDefault();sync();
-const w=Number(val('weight')),n=Number(val('ageNumber')),y=years(),ds=val('density').trim(),d=Number(ds),health=val('health');
+const w=Number(val('weight')),n=Number(val('ageNumber')),y=years(),health=val('health'),mode=val('snackmode');
+let servingG=0,servingKcal=0,snackName='';
+if(mode==='chicken'){servingG=40;servingKcal=146;snackName='本土雞胸肉舒肥熟凍乾'}
+else if(mode==='beef'){servingG=40;servingKcal=152;snackName='澳洲草飼牛後腿舒肥熟凍乾'}
+else if(mode==='other'){servingG=Number(val('servingg'));servingKcal=Number(val('servingkcal'));snackName='所選零食'}
 if(!val('weight')||!Number.isFinite(w)||w<.5||w>100){error.textContent='請輸入有效體重（0.5～100 kg）。';return}
 if(!val('ageNumber')||!Number.isFinite(n)||n<=0||y>35){error.textContent='請輸入有效年齡，例如 5 歲或 6 個月。';return}
-if(ds&&(!Number.isFinite(d)||d<1||d>1000)){error.textContent='零食熱量請輸入 1～1000 kcal／100g。';return}
+if(mode==='other'&&(!val('servingg')||!val('servingkcal')||!Number.isFinite(servingG)||!Number.isFinite(servingKcal)||servingG<=0||servingKcal<=0||servingG>10000||servingKcal>10000)){error.textContent='請填寫包裝標示的每份重量與每份熱量。';return}
 let mer,method='',warning='',base=70*Math.pow(w,.75),isVet=false;
 const vm=Number(val('vetmer'));
 if(['under','medical','pregnant','unsure'].includes(health)){
@@ -60,8 +66,9 @@ if(y>=7)warning='高齡毛孩的實際需求受肌肉量、健康狀況及活動
 const reliable=!(health==='over'&&!val('idealweight'));
 $('mer').textContent=Math.round(mer);
 $('treat').textContent=reliable?(mer*.1).toFixed(1):'—';
-$('grambox').style.display=ds&&reliable?'block':'none';
-if(ds&&reliable)$('grams').textContent=(mer*.1*100/d).toFixed(1);
+$('grambox').style.display=mode!=='none'&&reliable?'block':'none';
+if(mode!=='none'&&reliable)$('grams').textContent=(mer*.1*servingG/servingKcal).toFixed(1);
+$('snackresult').textContent=mode==='none'?'目前只顯示零食熱量上限。':snackName+'：每份 '+servingG+'g／'+servingKcal+' kcal。'+(reliable?'依熱量換算每日上限約 '+(mer*.1*servingG/servingKcal).toFixed(1)+'g；所有零食應合併計算。':'目前無法可靠換算每日零食配額。');
 $('explain').textContent=method+(reliable?' 零食熱量以每日總熱量的 10% 作為一般上限，並非建議一定吃滿。':' 無法據此可靠換算零食配額。');
 $('resultwarning').textContent=warning+(isVet?' 若獸醫師要求限制零食，應以獸醫師建議為準。':'');
 results.classList.add('show');results.scrollIntoView({behavior:'smooth',block:'start'});
